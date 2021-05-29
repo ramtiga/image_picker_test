@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'dart:typed_data';
@@ -61,9 +62,14 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future _saveImage() async {
     if (_image != null) {
-      Uint8List _buffer = await _image.readAsBytes();
-      final result = await ImageGallerySaver.saveImage(_buffer);
+      Uint8List buffer = await _image.readAsBytes();
+      final result = await ImageGallerySaver.saveImage(buffer);
+      _toastInfo("画像を保存しました");
     }
+  }
+
+  _toastInfo(String info) {
+    Fluttertoast.showToast(msg: info, toastLength: Toast.LENGTH_LONG);
   }
 
   @override
