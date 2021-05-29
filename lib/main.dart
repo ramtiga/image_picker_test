@@ -1,7 +1,8 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'dart:typed_data';
 
 void main() {
   runApp(MyApp());
@@ -35,7 +36,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final picker = ImagePicker();
 
   Future getImageFromCamera() async {
-    var pickedFile = await picker.getImage(source: ImageSource.camera);
+    final pickedFile = await picker.getImage(source: ImageSource.camera);
 
     setState(() {
       if (pickedFile != null) {
@@ -47,7 +48,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future _getImage() async {
-    var pickedFile = await picker.getImage(source: ImageSource.gallery);
+    final pickedFile = await picker.getImage(source: ImageSource.gallery);
 
     setState(() {
       if (pickedFile != null) {
@@ -58,11 +59,18 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  Future _saveImage() async {
+    if (_image != null) {
+      Uint8List _buffer = await _image.readAsBytes();
+      final result = await ImageGallerySaver.saveImage(_buffer);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Image Picker Demo"),
+        title: Text("Save image to Gallery"),
       ),
       body: Center(
           child: Column(
@@ -85,7 +93,20 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: Icon(Icons.image),
               ),
             ],
-          )
+          ),
+          SizedBox(
+            height: 30,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              FloatingActionButton(
+                onPressed: _saveImage,
+                child: Icon(Icons.save_alt),
+                backgroundColor: Colors.red,
+              ),
+            ],
+          ),
         ],
       )),
     );
